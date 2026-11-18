@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Mail, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Lock, Mail, ArrowRight, UserCheck, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api from '../services/api';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { login } = useAuth();
   const { showToast } = useToast();
 
@@ -15,8 +14,6 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const isAdminRoute = location.pathname.includes('/admin');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,11 +45,6 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const fillAdminCredentials = () => {
-    setEmail('admin@jutarghor.com');
-    setPassword('admin123');
-  };
-
   const fillCustomerCredentials = () => {
     setEmail('rahim@gmail.com');
     setPassword('customer123');
@@ -67,12 +59,10 @@ export const LoginPage: React.FC = () => {
             JG
           </div>
           <h1 className="text-2xl font-black text-white uppercase tracking-tight">
-            {isAdminRoute ? 'Admin Management Login' : 'Sign in to Jutar Ghor'}
+            Customer Sign In
           </h1>
           <p className="text-xs text-zinc-400">
-            {isAdminRoute
-              ? 'Access products, stock tracking, and orders management.'
-              : 'Track past orders, save sneakers to wishlist, and checkout faster.'}
+            Sign in to track orders, save sneakers to your wishlist, and checkout faster.
           </p>
         </div>
 
@@ -91,7 +81,7 @@ export const LoginPage: React.FC = () => {
               <input
                 type="email"
                 required
-                placeholder="name@example.com"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-brand-orange"
@@ -122,39 +112,41 @@ export const LoginPage: React.FC = () => {
             disabled={loading}
             className="w-full py-3 rounded-xl bg-brand-orange hover:bg-brand-orange-hover text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-glow-orange transition-all"
           >
-            {loading ? 'Authenticating...' : 'Sign In'}
+            {loading ? 'Signing in...' : 'Sign In'}
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        {/* Quick Demo Fill Buttons for Fast Reviewer Testing */}
+        {/* Quick Demo Fill for Customer */}
         <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 space-y-2">
           <span className="text-[11px] text-zinc-400 font-semibold uppercase tracking-wider block text-center">
-            ⚡ Quick Test Credentials
+            ⚡ Quick Test Customer Account
           </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={fillAdminCredentials}
-              className="py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-[11px] font-bold text-brand-orange transition-colors"
-            >
-              Fill Admin
-            </button>
-            <button
-              type="button"
-              onClick={fillCustomerCredentials}
-              className="py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-[11px] font-bold text-zinc-300 transition-colors"
-            >
-              Fill Customer
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={fillCustomerCredentials}
+            className="w-full py-2 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-brand-orange transition-colors"
+          >
+            Fill Demo Customer (rahim@gmail.com)
+          </button>
         </div>
 
-        {/* Bottom Switch */}
+        {/* Register Link */}
         <div className="text-center text-xs text-zinc-400 pt-2 border-t border-zinc-800">
           <span>Don't have an account yet? </span>
           <Link to="/register" className="text-brand-orange font-bold hover:underline">
             Register Here
+          </Link>
+        </div>
+
+        {/* Separate Admin Portal Link */}
+        <div className="text-center pt-2">
+          <Link
+            to="/admin/login"
+            className="inline-flex items-center gap-1.5 text-[11px] text-zinc-400 hover:text-zinc-300 font-medium transition-colors"
+          >
+            <Shield className="w-3.5 h-3.5 text-zinc-400" />
+            <span>Store Staff & Management Portal →</span>
           </Link>
         </div>
       </div>

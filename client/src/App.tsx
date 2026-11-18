@@ -30,6 +30,7 @@ import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 
 // Admin Layout & Pages
 import { AdminLayout } from './components/admin/AdminLayout';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { AdminProductsPage } from './pages/admin/AdminProductsPage';
 import { AdminProductFormPage } from './pages/admin/AdminProductFormPage';
@@ -84,7 +85,7 @@ export const App: React.FC = () => {
                 </Route>
 
                 {/* Admin Standalone Login */}
-                <Route path="/admin/login" element={<LoginPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
 
                 {/* Admin Protected Dashboard Routes */}
                 <Route path="/admin" element={<AdminLayout />}>
