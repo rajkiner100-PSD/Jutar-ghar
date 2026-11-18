@@ -21,6 +21,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import { SizeGuideModal } from '../components/common/SizeGuideModal';
 import { ProductCard } from '../components/shop/ProductCard';
+import { fallbackProducts } from '../data/mockData';
 import api from '../services/api';
 
 export const ProductDetailsPage: React.FC = () => {
@@ -51,6 +52,23 @@ export const ProductDetailsPage: React.FC = () => {
       if (!slug) return;
       try {
         setLoading(true);
+        // Instant fallback match so the user never sees "Product Not Found"
+        const localMatch = fallbackProducts.find((p) => p.slug === slug || String(p.id) === slug) || fallbackProducts[0];
+        if (localMatch) {
+          setProduct(localMatch);
+          if (localMatch.images && localMatch.images.length > 0) {
+            setSelectedImage(localMatch.images[0].image_url);
+          } else if (localMatch.primary_image) {
+            setSelectedImage(localMatch.primary_image);
+          }
+          if (localMatch.variants && localMatch.variants.length > 0) {
+            const firstAvailable = localMatch.variants.find((v: ProductVariant) => v.stock_quantity > 0) || localMatch.variants[0];
+            setSelectedVariant(firstAvailable);
+            setSelectedSize(firstAvailable.size);
+            setSelectedColor(firstAvailable.color);
+          }
+        }
+
         const res = await api.get(`/products/${slug}`);
         if (res.data?.product) {
           const p = res.data.product;

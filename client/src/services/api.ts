@@ -375,8 +375,9 @@ function handleFallback(config: any) {
   }
 
   // 9. Single Product
-  if (cleanPath.startsWith('/products/') && cleanPath !== '/products/' && !cleanPath.includes('/products/search')) {
-    const identifier = decodeURIComponent(cleanPath.replace('/products/', '').split('/')[0]);
+  if (cleanPath.includes('/products/') && !cleanPath.includes('/products/search')) {
+    const parts = cleanPath.split('/products/')[1]?.split('?')[0]?.split('/');
+    const identifier = parts ? decodeURIComponent(parts[0]) : '';
     const product = fallbackProducts.find(
       (p) => String(p.id) === identifier || p.slug === identifier
     );
@@ -387,7 +388,7 @@ function handleFallback(config: any) {
   }
 
   // 10. Products Catalog & Filtering
-  if (cleanPath.endsWith('/products')) {
+  if (cleanPath.includes('/products') && !cleanPath.includes('/products/')) {
     let result = [...fallbackProducts];
 
     if (params.category) {
