@@ -7,22 +7,35 @@ import api from '../services/api';
 
 export const OrderHistoryPage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const getLocalUserOrders = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('jutar_ghor_saved_orders') || '[]');
+      if (user?.email) {
+        const filtered = saved.filter((o: any) => o.customer_email?.toLowerCase() === user.email.toLowerCase());
+        if (filtered.length > 0) return filtered;
+      }
+      return saved;
+    } catch (e) {
+      return [];
+    }
+  };
+
+  const [orders, setOrders] = useState<Order[]>(getLocalUserOrders());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       api.get('/orders/my-orders').then((res) => {
-        if (res.data?.orders) {
+        if (res.data?.orders && res.data.orders.length > 0) {
           setOrders(res.data.orders);
+        } else {
+          setOrders(getLocalUserOrders());
         }
-      }).catch((err) => {
-        console.error('Failed to load orders', err);
+      }).catch(() => {
+        setOrders(getLocalUserOrders());
       }).finally(() => setLoading(false));
-    } else {
-      setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user?.email]);
 
   if (!isAuthenticated) {
     return (

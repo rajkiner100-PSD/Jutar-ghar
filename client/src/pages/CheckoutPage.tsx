@@ -109,54 +109,76 @@ export const CheckoutPage: React.FC = () => {
         })),
       };
 
-      let confirmedOrder: any = null;
+      const localOrderTemplate = {
+        id: Date.now(),
+        order_number: `JG-2026-${Math.floor(10000 + Math.random() * 90000)}`,
+        customer_name: customerName.trim(),
+        customer_phone: cleanPhone,
+        customer_email: customerEmail.trim() || 'customer@jutarghor.com',
+        district: district.trim(),
+        area: area.trim(),
+        delivery_district: district.trim(),
+        delivery_area: area.trim(),
+        full_address: fullAddress.trim(),
+        delivery_charge: deliveryFee,
+        delivery_fee: deliveryFee,
+        subtotal: subtotal,
+        discount: couponDiscount,
+        discount_amount: couponDiscount,
+        coupon_code: coupon ? coupon.code : null,
+        total_amount: total,
+        payment_method: paymentMethod,
+        payment_status: paymentMethod === 'cod' ? 'pending' : 'paid',
+        order_status: 'confirmed',
+        created_at: new Date().toISOString(),
+        items: cart.map((it) => ({
+          id: it.variant.id || Date.now(),
+          product_name: it.product.name,
+          size: it.variant.size,
+          color: it.variant.color,
+          price: it.product.sale_price,
+          quantity: it.quantity,
+          total: it.product.sale_price * it.quantity,
+          image_url: it.product.primary_image,
+          product_image: it.product.primary_image,
+        })),
+      };
+
+      let confirmedOrder: any = localOrderTemplate;
 
       try {
         const res = await api.post('/orders', payload);
         if (res.data?.order) {
-          confirmedOrder = res.data.order;
+          confirmedOrder = {
+            ...localOrderTemplate,
+            ...res.data.order,
+            customer_name: res.data.order.customer_name || localOrderTemplate.customer_name,
+            customer_phone: res.data.order.customer_phone || localOrderTemplate.customer_phone,
+            district: res.data.order.district || localOrderTemplate.district,
+            area: res.data.order.area || localOrderTemplate.area,
+            delivery_district: res.data.order.district || localOrderTemplate.delivery_district,
+            delivery_area: res.data.order.area || localOrderTemplate.delivery_area,
+            total_amount: res.data.order.total_amount || localOrderTemplate.total_amount,
+            delivery_fee: res.data.order.delivery_fee || localOrderTemplate.delivery_fee,
+            delivery_charge: res.data.order.delivery_fee || localOrderTemplate.delivery_charge,
+            order_status: res.data.order.order_status || localOrderTemplate.order_status,
+            payment_status: res.data.order.payment_status || localOrderTemplate.payment_status,
+            items: (res.data.order.items && res.data.order.items.length > 0) ? res.data.order.items : localOrderTemplate.items,
+          };
         }
       } catch (apiErr: any) {
         console.warn('Backend order submission offline, using local order generator:', apiErr);
       }
 
-      // If backend was offline or failed on static host, create resilient confirmed order
-      if (!confirmedOrder) {
-        const generatedNumber = `JG-2026-${Math.floor(10000 + Math.random() * 90000)}`;
-        confirmedOrder = {
-          id: Date.now(),
-          order_number: generatedNumber,
-          customer_name: customerName.trim(),
-          customer_phone: cleanPhone,
-          customer_email: customerEmail.trim() || null,
-          delivery_district: district.trim(),
-          delivery_area: area.trim(),
-          full_address: fullAddress.trim(),
-          delivery_charge: deliveryFee,
-          subtotal: subtotal,
-          discount_amount: couponDiscount,
-          total_amount: total,
-          payment_method: paymentMethod,
-          payment_status: paymentMethod === 'cod' ? 'pending' : 'paid',
-          order_status: 'confirmed',
-          created_at: new Date().toISOString(),
-          items: cart.map((it) => ({
-            id: it.variant.id || Date.now(),
-            product_name: it.product.name,
-            size: it.variant.size,
-            color: it.variant.color,
-            price: it.product.sale_price,
-            quantity: it.quantity,
-            total: it.product.sale_price * it.quantity,
-            image_url: it.product.primary_image,
-          })),
-        };
-      }
-
-      // Persist in localStorage so Confirmation and Order Tracking always work!
+      // Persist in localStorage so Confirmation, Tracking, and Admin Panel always display it!
       try {
         const saved = JSON.parse(localStorage.getItem('jutar_ghor_saved_orders') || '[]');
-        saved.unshift(confirmedOrder);
+        const existingIdx = saved.findIndex((o: any) => o.order_number === confirmedOrder.order_number);
+        if (existingIdx !== -1) {
+          saved[existingIdx] = confirmedOrder;
+        } else {
+          saved.unshift(confirmedOrder);
+        }
         localStorage.setItem('jutar_ghor_saved_orders', JSON.stringify(saved));
       } catch (e) {}
 

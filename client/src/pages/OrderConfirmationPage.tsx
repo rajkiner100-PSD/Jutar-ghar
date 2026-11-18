@@ -59,7 +59,7 @@ export const OrderConfirmationPage: React.FC = () => {
     );
   }
 
-  const isDhaka = order.district?.toLowerCase().includes('dhaka');
+  const isDhaka = (order.district || (order as any).delivery_district || '').toLowerCase().includes('dhaka');
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 animate-fade-in">
@@ -128,7 +128,7 @@ export const OrderConfirmationPage: React.FC = () => {
               <MapPin className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-white">{order.full_address}</p>
-                <p className="text-zinc-400">{order.area}, {order.district}</p>
+                <p className="text-zinc-400">{order.area || (order as any).delivery_area}, {order.district || (order as any).delivery_district}</p>
               </div>
             </div>
 
@@ -172,12 +172,12 @@ export const OrderConfirmationPage: React.FC = () => {
             <div className="flex justify-between">
               <span>Delivery Charge:</span>
               <span className="text-white font-bold">
-                {order.delivery_fee === 0 ? 'FREE' : `৳${order.delivery_fee}`}
+                {(order.delivery_fee ?? (order as any).delivery_charge ?? 80) === 0 ? 'FREE' : `৳${order.delivery_fee ?? (order as any).delivery_charge ?? 80}`}
               </span>
             </div>
             <div className="flex justify-between text-sm font-black text-white pt-2 border-t border-zinc-800">
               <span>Total Amount:</span>
-              <span className="text-brand-orange">৳{order.total_amount?.toLocaleString('en-BD')}</span>
+              <span className="text-brand-orange">৳{Number(order.total_amount || 0).toLocaleString('en-BD')}</span>
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@ export const OrderConfirmationPage: React.FC = () => {
               <div key={idx} className="py-4 first:pt-0 last:pb-0 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl bg-zinc-950 overflow-hidden shrink-0 border border-zinc-800">
-                    <img src={it.product_image || ''} alt="" className="w-full h-full object-cover" />
+                    <img src={it.product_image || (it as any).image_url || ''} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p className="font-bold text-white">{it.product_name}</p>
