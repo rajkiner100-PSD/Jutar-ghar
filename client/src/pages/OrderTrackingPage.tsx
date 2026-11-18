@@ -30,6 +30,18 @@ export const OrderTrackingPage: React.FC = () => {
     try {
       setLoading(true);
       setError('');
+
+      // Check localStorage first
+      try {
+        const saved = JSON.parse(localStorage.getItem('jutar_ghor_saved_orders') || '[]');
+        const found = saved.find((o: any) => o.order_number?.toLowerCase() === num.trim().toLowerCase());
+        if (found) {
+          setOrder(found);
+          setLoading(false);
+          return;
+        }
+      } catch (e) {}
+
       const res = await api.get(`/orders/track/${encodeURIComponent(num.trim())}`, {
         params: ph.trim() ? { phone: ph.trim() } : {},
       });

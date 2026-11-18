@@ -20,6 +20,16 @@ export const OrderConfirmationPage: React.FC = () => {
 
   useEffect(() => {
     if (!order && orderNumber) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('jutar_ghor_saved_orders') || '[]');
+        const localFound = saved.find((o: any) => o.order_number === orderNumber);
+        if (localFound) {
+          setOrder(localFound);
+          setLoading(false);
+          return;
+        }
+      } catch (e) {}
+
       api.get(`/orders/track/${orderNumber}`).then((res) => {
         if (res.data?.order) {
           setOrder(res.data.order);
