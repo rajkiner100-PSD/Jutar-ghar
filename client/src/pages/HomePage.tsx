@@ -14,16 +14,17 @@ import {
 } from 'lucide-react';
 import { Product, Category, Banner } from '../types';
 import { ProductCard } from '../components/shop/ProductCard';
+import { fallbackProducts, fallbackCategories, fallbackBanners } from '../data/mockData';
 import api from '../services/api';
 
 export const HomePage: React.FC = () => {
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [banners, setBanners] = useState<Banner[]>(fallbackBanners);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [trendingProducts, setTrendingProducts] = useState<Product[]>([]);
-  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>(fallbackProducts.filter((p) => p.is_featured === 1));
+  const [trendingProducts, setTrendingProducts] = useState<Product[]>(fallbackProducts.filter((p) => p.is_trending === 1));
+  const [newArrivals, setNewArrivals] = useState<Product[]>(fallbackProducts.filter((p) => p.is_new_arrival === 1));
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadData() {

@@ -17,12 +17,13 @@ import {
 } from 'lucide-react';
 import { Order, OrderStatus, PaymentStatus } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { fallbackOrders } from '../../data/mockData';
 import api from '../../services/api';
 
 export const AdminOrdersPage: React.FC = () => {
   const { showToast } = useToast();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState<Order[]>(fallbackOrders as any);
+  const [loading, setLoading] = useState(false);
 
   // Filters
   const [statusFilter, setStatusFilter] = useState<string>('all');

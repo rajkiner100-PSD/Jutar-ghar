@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Image as ImageIcon, Plus, Trash2, Edit, X } from 'lucide-react';
 import { Banner } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { fallbackBanners } from '../../data/mockData';
 import api from '../../services/api';
 
 export const AdminBannersPage: React.FC = () => {
   const { showToast } = useToast();
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [banners, setBanners] = useState<Banner[]>(fallbackBanners);
+  const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);

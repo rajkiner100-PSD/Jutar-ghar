@@ -14,14 +14,15 @@ import {
 } from 'lucide-react';
 import { Product, Category, Brand } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { fallbackProducts, fallbackCategories, fallbackBrands } from '../../data/mockData';
 import api from '../../services/api';
 
 export const AdminProductsPage: React.FC = () => {
   const { showToast } = useToast();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
+  const [brands, setBrands] = useState<Brand[]>(fallbackBrands);
+  const [loading, setLoading] = useState(false);
 
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('');

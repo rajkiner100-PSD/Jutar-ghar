@@ -15,12 +15,13 @@ import {
 } from 'lucide-react';
 import { Order, OrderStatus } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { fallbackAdminStats } from '../../data/mockData';
 import api from '../../services/api';
 
 export const AdminDashboardPage: React.FC = () => {
   const { showToast } = useToast();
-  const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<any>(fallbackAdminStats);
+  const [loading, setLoading] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
 
   const fetchStats = async () => {

@@ -11,15 +11,16 @@ import {
 import { Product, Category, Brand } from '../types';
 import { ProductCard } from '../components/shop/ProductCard';
 import { ProductFilterSidebar } from '../components/shop/ProductFilterSidebar';
+import { fallbackProducts, fallbackCategories, fallbackBrands } from '../data/mockData';
 import api from '../services/api';
 
 export const ShopPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
+  const [brands, setBrands] = useState<Brand[]>(fallbackBrands);
+  const [loading, setLoading] = useState(false);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   // Filter state
@@ -36,7 +37,7 @@ export const ShopPage: React.FC = () => {
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(25000);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalProducts, setTotalProducts] = useState<number>(0);
+  const [totalProducts, setTotalProducts] = useState<number>(fallbackProducts.length);
 
   // Fetch Categories & Brands once
   useEffect(() => {
@@ -68,11 +69,11 @@ export const ShopPage: React.FC = () => {
         if (minPrice > 0) params.minPrice = minPrice;
 
         const res = await api.get('/products', { params });
-        if (res.data) {
-          setProducts(res.data.products || []);
+        if (res.data?.products && res.data.products.length > 0) {
+          setProducts(res.data.products);
           if (res.data.pagination) {
             setTotalPages(res.data.pagination.totalPages || 1);
-            setTotalProducts(res.data.pagination.total || 0);
+            setTotalProducts(res.data.pagination.total || res.data.products.length);
           }
         }
       } catch (err) {

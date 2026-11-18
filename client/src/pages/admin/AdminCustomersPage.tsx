@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Users, Mail, Phone, Calendar, ShoppingBag } from 'lucide-react';
 import { User } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { fallbackCustomers } from '../../data/mockData';
 import api from '../../services/api';
 
 export const AdminCustomersPage: React.FC = () => {
   const { showToast } = useToast();
-  const [customers, setCustomers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [customers, setCustomers] = useState<User[]>(fallbackCustomers as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     api.get('/admin/customers').then((res) => {

@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Ticket, Plus, Trash2, Edit, X, Check } from 'lucide-react';
 import { Coupon } from '../../types';
 import { useToast } from '../../context/ToastContext';
+import { fallbackCoupons } from '../../data/mockData';
 import api from '../../services/api';
 
 export const AdminCouponsPage: React.FC = () => {
   const { showToast } = useToast();
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [coupons, setCoupons] = useState<Coupon[]>(fallbackCoupons);
+  const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
