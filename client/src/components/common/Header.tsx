@@ -65,16 +65,24 @@ export const Header: React.FC = () => {
             Cash on Delivery Available Nationwide
           </span>
         </div>
-        <div className="mx-auto sm:mx-0 flex items-center gap-4">
+        <div className="mx-auto sm:mx-0 flex items-center gap-3 sm:gap-4">
           <Link
             to="/track"
             className="flex items-center gap-1.5 text-zinc-300 hover:text-brand-orange transition-colors"
           >
             <Package className="w-3.5 h-3.5 text-brand-orange" />
-            <span>Track Your Order</span>
+            <span>Track Order</span>
           </Link>
           <span className="text-zinc-600">|</span>
           <span className="text-zinc-400">Dhaka: ৳80 | Outside: ৳150</span>
+          <span className="text-zinc-600">|</span>
+          <Link
+            to="/admin/login"
+            className="flex items-center gap-1.5 text-brand-orange hover:text-white font-bold transition-colors"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Admin Portal</span>
+          </Link>
         </div>
       </div>
 

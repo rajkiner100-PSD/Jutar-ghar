@@ -87,6 +87,20 @@ export const AdminLoginPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Toggle between Customer and Admin */}
+        <div className="flex rounded-2xl bg-zinc-900 p-1.5 border border-zinc-800">
+          <Link
+            to="/login"
+            className="flex-1 py-2 text-center text-xs font-semibold rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition-all flex items-center justify-center gap-1.5"
+          >
+            <span>← Customer Login</span>
+          </Link>
+          <div className="flex-1 py-2 text-center text-xs font-bold rounded-xl bg-brand-orange text-white shadow-glow-orange flex items-center justify-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Admin Portal</span>
+          </div>
+        </div>
+
         {error && (
           <div className="p-3.5 rounded-xl bg-red-950/50 border border-red-500/50 text-red-200 text-xs font-medium">
             {error}
