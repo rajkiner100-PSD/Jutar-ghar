@@ -78,23 +78,49 @@ export async function createOrder(req: AuthRequest, res: Response): Promise<void
       }
 
       // Fetch variant with product details
-      const variant = await db.get(
-        `SELECT 
-          pv.id as variant_id,
-          pv.size,
-          pv.color,
-          pv.stock_quantity,
-          pv.additional_price,
-          p.id as product_id,
-          p.name as product_name,
-          p.sale_price,
-          p.is_active,
-          (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY is_primary DESC LIMIT 1) as primary_image
-        FROM product_variants pv
-        JOIN products p ON pv.product_id = p.id
-        WHERE pv.id = ?`,
-        [item.variant_id]
-      );
+      let variant = null;
+      if (item.variant_id) {
+        variant = await db.get(
+          `SELECT 
+            pv.id as variant_id,
+            pv.size,
+            pv.color,
+            pv.stock_quantity,
+            pv.additional_price,
+            p.id as product_id,
+            p.name as product_name,
+            p.sale_price,
+            p.is_active,
+            (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY is_primary DESC LIMIT 1) as primary_image
+          FROM product_variants pv
+          JOIN products p ON pv.product_id = p.id
+          WHERE pv.id = ?`,
+          [item.variant_id]
+        );
+      }
+
+      // Fallback: If variant wasn't found by variant_id alone, match by product_id
+      if (!variant && item.product_id) {
+        variant = await db.get(
+          `SELECT 
+            pv.id as variant_id,
+            pv.size,
+            pv.color,
+            pv.stock_quantity,
+            pv.additional_price,
+            p.id as product_id,
+            p.name as product_name,
+            p.sale_price,
+            p.is_active,
+            (SELECT image_url FROM product_images WHERE product_id = p.id ORDER BY is_primary DESC LIMIT 1) as primary_image
+          FROM product_variants pv
+          JOIN products p ON pv.product_id = p.id
+          WHERE p.id = ?
+          ORDER BY pv.stock_quantity DESC
+          LIMIT 1`,
+          [item.product_id]
+        );
+      }
 
       if (!variant) {
         await db.run('ROLLBACK');

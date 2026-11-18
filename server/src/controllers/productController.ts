@@ -157,13 +157,13 @@ export async function getProducts(req: Request, res: Response): Promise<void> {
         ? Math.round(((prod.regular_price - prod.sale_price) / prod.regular_price) * 100)
         : 0;
 
-      const variants = await db.all(
-        `SELECT DISTINCT size, color, color_hex, stock_quantity 
-         FROM product_variants WHERE product_id = ? ORDER BY size ASC`,
+      prod.variants = await db.all(
+        `SELECT id, product_id, size, color, color_hex, sku, stock_quantity, additional_price 
+         FROM product_variants WHERE product_id = ? ORDER BY size ASC, color ASC`,
         [prod.id]
       );
-      prod.available_sizes = Array.from(new Set(variants.filter((v: any) => v.stock_quantity > 0).map((v: any) => v.size)));
-      prod.available_colors = Array.from(new Set(variants.map((v: any) => v.color)));
+      prod.available_sizes = Array.from(new Set(prod.variants.filter((v: any) => v.stock_quantity > 0).map((v: any) => v.size)));
+      prod.available_colors = Array.from(new Set(prod.variants.map((v: any) => v.color)));
     }
 
     res.json({
